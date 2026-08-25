@@ -1,15 +1,21 @@
 # 🛡️ SafeGuard Agent: Approval-Gated Workspace Assistant
 
-An autonomous agent built on **TrueForge** designed to audit local directories, sort files, and handle routine maintenance tasks with strict human-in-the-loop approvals before executing any irreversible actions.
+An autonomous workspace assistant built on **TrueForge**, designed to audit directories, manage files, and execute maintenance tasks securely with strict human-in-the-loop approval gating and path sandboxing.
 
-## 🚀 Architecture & Features
-- **TrueForge Harness:** Core runtime layer managing agent loops and sessions.
-- **Approval Gating:** Automatically pauses for manual user confirmation before performing file operations.
-- **Sandboxed Execution:** Executes diagnostic and sorting logic securely within an isolated environment.
+---
 
-## 🛠️ Setup & Local Execution
-1. Ensure Node.js 22+ is installed.
-2. Run TrueForge locally:
-   ```bash
-   npx @truefoundry/trueforge
-   
+## 🚀 Architecture & Core Features
+
+- **TrueForge Integration:** Built on top of the TrueForge harness for reliable agent loops and session execution.
+- **Strict Sandbox Containment:** Uses robust `Path.is_relative_to()` ancestry checks to strictly prevent path traversal attacks (blocking escaping targets like sibling or parent directories).
+- **Configurable Approval Gating:** Pauses for manual confirmation before executing sensitive actions, with graceful fallback to fail-closed behavior in headless/non-interactive environments (`EOFError`/`KeyboardInterrupt`).
+- **Resilient Error Handling:** Fully isolated workspace auditing with automatic parent directory creation and robust error recovery.
+
+---
+
+## 🧪 Testing & Code Quality
+SafeGuard Agent features a comprehensive, concurrent-safe unit test suite utilizing Python's `unittest` and managed `tempfile.TemporaryDirectory` fixtures to guarantee clean execution without repository pollution.
+
+To run the test suite locally:
+```bash
+python3 -m unittest discover tests
