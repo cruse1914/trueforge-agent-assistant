@@ -2,6 +2,10 @@ import json
 from pathlib import Path
 
 class SafeGuardAgent:
+    """
+    SafeGuardAgent: An autonomous workspace assistant built on TrueForge
+    featuring strict human-in-the-loop approval gating and secure path sandboxing.
+    """
     def __init__(self, config_path=None):
         if config_path is None:
             config_path = Path(__file__).resolve().parent / "agent_config.json"
@@ -18,7 +22,7 @@ class SafeGuardAgent:
         raw_target = self.config.get("target_directory", "workspace_sandbox")
         resolved_target = (self.repo_root / raw_target).resolve()
         
-        # Enforce secure path ancestry containment using is_relative_to()
+        # Enforce secure path ancestry containment using is_relative_to() to prevent traversal
         try:
             if not resolved_target.is_relative_to(self.sandbox_root):
                 raise ValueError(f"Security Error: Target directory '{raw_target}' escapes the sandbox root.")
@@ -28,6 +32,7 @@ class SafeGuardAgent:
         self.target_dir = resolved_target
 
     def audit_workspace(self):
+        """Audits the target workspace directory safely within sandbox boundaries."""
         print(f"[*] SafeGuard Agent initializing audit on: {self.target_dir}")
         try:
             if not self.target_dir.exists():
@@ -45,12 +50,12 @@ class SafeGuardAgent:
             return []
 
     def request_approval(self, action_description):
+        """Requests human authorization, failing closed safely in headless/non-interactive environments."""
         print(f"\n[!] APPROVAL REQUIRED: {action_description}")
         if not self.config.get("approval_required", True):
             print("[*] Approval bypass enabled in config. Auto-approving.")
             return True
             
-        # Handle non-interactive or headless environments gracefully
         try:
             choice = input("Do you approve this action? [y/N]: ").strip().lower()
         except (EOFError, KeyboardInterrupt):
