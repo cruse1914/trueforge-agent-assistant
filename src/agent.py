@@ -1,11 +1,9 @@
-import os
 import json
 from pathlib import Path
 
 class SafeGuardAgent:
     def __init__(self, config_path=None):
         if config_path is None:
-            # Fix CWD dependency: resolve config path relative to this module file
             config_path = Path(__file__).resolve().parent / "agent_config.json"
         
         try:
@@ -14,15 +12,17 @@ class SafeGuardAgent:
         except Exception as e:
             raise RuntimeError(f"Failed to load agent configuration from {config_path}: {e}")
         
-        # Enforce sandbox root containment for security
         self.repo_root = Path(__file__).resolve().parent.parent
-        self.sandbox_root = self.repo_root / "workspace_sandbox"
+        self.sandbox_root = (self.repo_root / "workspace_sandbox").resolve()
         
         raw_target = self.config.get("target_directory", "workspace_sandbox")
         resolved_target = (self.repo_root / raw_target).resolve()
         
-        # Prevent path traversal outside the sandbox root
-        if not str(resolved_target).startswith(str(self.sandbox_root)):
+        # Enforce secure path ancestry containment using is_relative_to()
+        try:
+            if not resolved_target.is_relative_to(self.sandbox_root):
+                raise ValueError(f"Security Error: Target directory '{raw_target}' escapes the sandbox root.")
+        except ValueError:
             raise ValueError(f"Security Error: Target directory '{raw_target}' escapes the sandbox root.")
             
         self.target_dir = resolved_target
@@ -50,8 +50,13 @@ class SafeGuardAgent:
             print("[*] Approval bypass enabled in config. Auto-approving.")
             return True
             
-        # Enforce human-in-the-loop verification
-        choice = input("Do you approve this action? [y/N]: ").strip().lower()
+        # Handle non-interactive or headless environments gracefully
+        try:
+            choice = input("Do you approve this action? [y/N]: ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            print("\n[-] Non-interactive environment detected or input interrupted. Denying by default.")
+            return False
+
         if choice in ['y', 'yes']:
             print("[+] Action approved by human operator.")
             return True
