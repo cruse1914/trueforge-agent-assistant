@@ -2,9 +2,11 @@ import json
 from pathlib import Path
 
 class SafeGuardAgent:
+    """
+    SafeGuardAgent: An autonomous workspace assistant built on TrueForge
+    featuring configurable human-in-the-loop approval gating and secure path sandboxing.
+    """
     def __init__(self, config_path=None):
-        if config_path is None:
-            config_path = Path(__file__).resolve().parent / "agent_config.json"
         
         try:
             with open(config_path, "r") as f:
