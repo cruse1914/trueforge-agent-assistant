@@ -11,4 +11,5 @@ An autonomous agent built on **TrueForge** designed to audit local directories, 
 1. Ensure Node.js 22+ is installed.
 2. Run TrueForge locally:
    ```bash
-   npx @truefoundry/trueforge
+  npx @truefoundry/trueforge
+    ```
