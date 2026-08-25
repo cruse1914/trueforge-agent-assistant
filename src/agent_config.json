@@ -1,0 +1,7 @@
+{
+  "agent_name": "SafeGuard Assistant",
+  "version": "1.0.0",
+  "harness": "TrueForge",
+  "approval_required": true,
+  "target_directory": "./workspace_sandbox"
+}
