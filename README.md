@@ -16,6 +16,14 @@ An autonomous workspace assistant built on **TrueForge**, designed to audit dire
 ## 🧪 Testing & Code Quality
 SafeGuard Agent features a comprehensive, concurrent-safe unit test suite utilizing Python's `unittest` and managed `tempfile.TemporaryDirectory` fixtures to guarantee clean execution without repository pollution.
 
+---
+
+## 🤖 Qodo Code Review Evidence & Audit Trail
+In alignment with enterprise-grade development standards and the **Qodo Code Quality Track**, all features, security controls, and documentation updates within this repository were developed through a disciplined pull request workflow and audited by Qodo AI.
+
+- **Representative Merged Pull Request:** [PR #12: Restore default config path fallback & security polish](https://github.com/cruse1914/trueforge-agent-assistant/pull/12)
+- **Review Scope:** Continuous automated auditing covering path traversal sandboxing (`Path.is_relative_to`), headless environment error handling (`EOFError`), test isolation (`tempfile.TemporaryDirectory`), and documentation integrity.
+
 To run the test suite locally:
 ```bash
 python3 -m unittest discover tests
